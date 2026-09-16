@@ -23,6 +23,7 @@ class ConfigurationRestServiceTest : BehaviorSpec({
     val fileSizeConfiguration = FileSizeConfiguration(maxFileSizeMB = 999L, maxInMemoryFileSizeMB = 80L)
     val documentCreationProviderConfiguration = DocumentCreationProviderConfiguration(
         configuredProvider = Optional.of("Epistola"),
+        smartDocumentsEnabled = Optional.empty(),
         epistolaRestUrl = Optional.of("https://epistola.example.com"),
         epistolaApiKey = Optional.of("fakeApiKey"),
         epistolaTenantId = Optional.of("zac-gemeente")

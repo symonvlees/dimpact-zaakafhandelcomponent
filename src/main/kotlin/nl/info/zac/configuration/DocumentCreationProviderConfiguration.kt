@@ -38,20 +38,24 @@ import kotlin.jvm.optionals.getOrNull
 @NoArgConstructor
 @AllOpen
 class DocumentCreationProviderConfiguration @Inject constructor(
+    // No parameter may carry a default value. When every parameter has one, Kotlin generates an extra
+    // public no-arg constructor carrying this constructor's annotations, leaving two @Inject constructors
+    // for Weld to choose between, and the deployment fails. Weld injects an empty Optional for a config
+    // property that is not set, so the defaults bought nothing anyway.
     @ConfigProperty(name = ENV_VAR_DOCUMENT_CREATION_PROVIDER)
-    private val configuredProvider: Optional<String> = Optional.empty(),
+    private val configuredProvider: Optional<String>,
 
     @ConfigProperty(name = ENV_VAR_SMARTDOCUMENTS_ENABLED)
-    private val smartDocumentsEnabled: Optional<Boolean> = Optional.empty(),
+    private val smartDocumentsEnabled: Optional<Boolean>,
 
     @ConfigProperty(name = ENV_VAR_EPISTOLA_CLIENT_MP_REST_URL)
-    private val epistolaRestUrl: Optional<String> = Optional.empty(),
+    private val epistolaRestUrl: Optional<String>,
 
     @ConfigProperty(name = ENV_VAR_EPISTOLA_API_KEY)
-    private val epistolaApiKey: Optional<String> = Optional.empty(),
+    private val epistolaApiKey: Optional<String>,
 
     @ConfigProperty(name = ENV_VAR_EPISTOLA_TENANT_ID)
-    private val epistolaTenantId: Optional<String> = Optional.empty()
+    private val epistolaTenantId: Optional<String>
 ) {
     companion object {
         const val ENV_VAR_DOCUMENT_CREATION_PROVIDER = "DOCUMENT_CREATION_PROVIDER"
