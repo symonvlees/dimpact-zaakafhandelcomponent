@@ -19,6 +19,7 @@ import nl.info.zac.app.configuration.model.toRestTaal
 import nl.info.zac.app.configuration.model.toRestTalen
 import nl.info.zac.configuration.AllowedFileType
 import nl.info.zac.configuration.ConfigurationService
+import nl.info.zac.configuration.DocumentCreationProviderConfiguration
 import nl.info.zac.configuration.FileSizeConfiguration
 import nl.info.zac.util.AllOpen
 import nl.info.zac.util.NoArgConstructor
@@ -34,8 +35,18 @@ import nl.info.zac.util.NoArgConstructor
 @NoArgConstructor
 class ConfigurationRestService @Inject constructor(
     private val configurationService: ConfigurationService,
-    private val fileSizeConfiguration: FileSizeConfiguration
+    private val fileSizeConfiguration: FileSizeConfiguration,
+    private val documentCreationProviderConfiguration: DocumentCreationProviderConfiguration
 ) {
+    /**
+     * The document creation integration ZAC is configured with, so that the frontends can offer the
+     * matching template configuration and document creation actions, or none at all.
+     */
+    @GET
+    @Path("document-creation-provider")
+    fun readDocumentCreationProvider(): String =
+        JsonbUtil.JSONB.toJson(documentCreationProviderConfiguration.activeProvider.name)
+
     @GET
     @Path("talen")
     fun listTalen(): List<RestTaal> = configurationService.listTalen().toRestTalen()

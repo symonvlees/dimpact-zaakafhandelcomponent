@@ -14,12 +14,34 @@ import nl.info.zac.app.configuration.model.createTaal
 import nl.info.zac.configuration.BrpConfiguration
 import nl.info.zac.configuration.BrpConfigurationProvider
 import nl.info.zac.configuration.ConfigurationService
+import nl.info.zac.configuration.DocumentCreationProviderConfiguration
 import nl.info.zac.configuration.FileSizeConfiguration
+import java.util.Optional
 
 class ConfigurationRestServiceTest : BehaviorSpec({
     val configurationService = mockk<ConfigurationService>()
     val fileSizeConfiguration = FileSizeConfiguration(maxFileSizeMB = 999L, maxInMemoryFileSizeMB = 80L)
-    val configurationRestService = ConfigurationRestService(configurationService, fileSizeConfiguration)
+    val documentCreationProviderConfiguration = DocumentCreationProviderConfiguration(
+        configuredProvider = Optional.of("Epistola"),
+        epistolaRestUrl = Optional.of("https://epistola.example.com"),
+        epistolaApiKey = Optional.of("fakeApiKey"),
+        epistolaTenantId = Optional.of("zac-gemeente")
+    )
+    val configurationRestService = ConfigurationRestService(
+        configurationService,
+        fileSizeConfiguration,
+        documentCreationProviderConfiguration
+    )
+
+    given("ZAC is configured with the Epistola document creation provider") {
+        `when`("the active document creation provider is requested") {
+            val response = configurationRestService.readDocumentCreationProvider()
+
+            then("the provider is returned as JSON") {
+                response shouldBe JsonbUtil.JSONB.toJson("EPISTOLA")
+            }
+        }
+    }
 
     given("Multiple languages are available") {
         val taal1 = createTaal(1L, "nl", "Nederlands", "Dutch", "nl_NL")
