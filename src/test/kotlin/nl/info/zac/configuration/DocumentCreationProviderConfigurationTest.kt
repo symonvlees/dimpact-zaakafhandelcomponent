@@ -114,6 +114,20 @@ class DocumentCreationProviderConfigurationTest : BehaviorSpec({
         }
     }
 
+    given("SmartDocuments selected while SMARTDOCUMENTS_ENABLED is not set at all") {
+        val configuration = configuration(provider = "SmartDocuments", smartDocumentsEnabled = null)
+        `when`("the configuration is validated on startup") {
+            val exception = shouldThrow<InvalidDocumentCreationProviderConfigurationException> {
+                configuration.onStartup(Any())
+            }
+            then("startup fails because the SmartDocuments service would stay inert without the flag") {
+                exception.message!! shouldContain "selects SmartDocuments"
+                exception.message!! shouldContain "SMARTDOCUMENTS_ENABLED is '<not set>'"
+                exception.message!! shouldContain "Set it to 'true'"
+            }
+        }
+    }
+
     given("an unrecognised DOCUMENT_CREATION_PROVIDER value") {
         val configuration = configuration(provider = "Word")
         `when`("the configuration is validated on startup") {

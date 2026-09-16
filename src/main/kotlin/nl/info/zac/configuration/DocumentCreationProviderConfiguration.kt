@@ -112,22 +112,26 @@ class DocumentCreationProviderConfiguration @Inject constructor(
             return "$ENV_VAR_DOCUMENT_CREATION_PROVIDER ('$requestedProvider') is not a supported provider. " +
                 "Use one of: ${DocumentCreationProvider.configurationValues()}."
         }
-        conflictWithSmartDocumentsFlag()?.let { return it }
+        smartDocumentsFlagMismatch()?.let { return it }
         return missingEpistolaConfiguration()
     }
 
     /**
-     * Rejects a [ENV_VAR_SMARTDOCUMENTS_ENABLED] that contradicts an explicitly configured provider.
+     * Rejects a [ENV_VAR_SMARTDOCUMENTS_ENABLED] that does not match an explicitly configured provider.
      * Only reported when the provider was configured explicitly, because otherwise the flag is what
      * the provider was derived from and the two cannot disagree.
+     *
+     * Selecting SmartDocuments requires the flag to be `true` rather than merely not `false`: the
+     * SmartDocuments service reads that flag itself and stays inert without it, so an installation that
+     * left it out would name SmartDocuments as its provider and then fail at the first document.
      */
-    private fun conflictWithSmartDocumentsFlag(): String? {
-        if (requestedProvider == null || smartDocumentsFlag == null) return null
+    private fun smartDocumentsFlagMismatch(): String? {
+        if (requestedProvider == null) return null
         return when {
-            activeProvider == DocumentCreationProvider.SMARTDOCUMENTS && !smartDocumentsFlag ->
+            activeProvider == DocumentCreationProvider.SMARTDOCUMENTS && smartDocumentsFlag != true ->
                 "$ENV_VAR_DOCUMENT_CREATION_PROVIDER selects SmartDocuments but " +
-                    "$ENV_VAR_SMARTDOCUMENTS_ENABLED is 'false'. Either set it to 'true' or remove it."
-            activeProvider != DocumentCreationProvider.SMARTDOCUMENTS && smartDocumentsFlag ->
+                    "$ENV_VAR_SMARTDOCUMENTS_ENABLED is '${smartDocumentsFlag ?: "<not set>"}'. Set it to 'true'."
+            activeProvider != DocumentCreationProvider.SMARTDOCUMENTS && smartDocumentsFlag == true ->
                 "$ENV_VAR_DOCUMENT_CREATION_PROVIDER selects $activeProvider but $ENV_VAR_SMARTDOCUMENTS_ENABLED " +
                     "is 'true'. ZAC supports one document creation provider at a time, so set " +
                     "$ENV_VAR_SMARTDOCUMENTS_ENABLED to 'false' or remove it."
