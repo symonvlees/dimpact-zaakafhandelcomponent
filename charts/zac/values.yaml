@@ -160,6 +160,20 @@ pabcApi:
 # -- API key for authentication of internal ZAC endpoints
 zacInternalEndpointsApiKey: ""
 
+# -- Selects the document creation integration ZAC uses. One of: SMARTDOCUMENTS, EPISTOLA, NONE (case-insensitive).
+# ZAC supports one provider at a time; configuring two is rejected on startup. When left empty, the provider is
+# derived from `smartDocuments.enabled`, so existing installations keep working unchanged.
+documentCreationProvider: ""
+
+epistola:
+   # -- URL to the Epistola API. Required when documentCreationProvider is EPISTOLA.
+  url: ""
+   # -- Epistola API key, injected as a Kubernetes Secret. Required when documentCreationProvider is EPISTOLA.
+   # A static API key is the only supported Epistola authentication mechanism; Keycloak client credentials are out of scope for the prototype.
+  apiKey: ""
+   # -- Epistola tenant identifier that scopes the available template groups and templates. Required when documentCreationProvider is EPISTOLA.
+  tenantId: ""
+
 smartDocuments:
    # -- Enable SmartDocuments integration for creating a new document
   enabled: false

@@ -83,6 +83,10 @@ The Github workflow will perform helm-linting and will bump the version if neede
 | db.name | string | `""` |  |
 | db.password | string | `""` |  |
 | db.user | string | `""` |  |
+| documentCreationProvider | string | `""` | Selects the document creation integration ZAC uses. One of: SMARTDOCUMENTS, EPISTOLA, NONE (case-insensitive). ZAC supports one provider at a time; configuring two is rejected on startup. When left empty, the provider is derived from `smartDocuments.enabled`, so existing installations keep working unchanged. |
+| epistola.apiKey | string | `""` | Epistola API key, injected as a Kubernetes Secret. Required when documentCreationProvider is EPISTOLA. A static API key is the only supported Epistola authentication mechanism; Keycloak client credentials are out of scope for the prototype. |
+| epistola.tenantId | string | `""` | Epistola tenant identifier that scopes the available template groups and templates. Required when documentCreationProvider is EPISTOLA. |
+| epistola.url | string | `""` | URL to the Epistola API. Required when documentCreationProvider is EPISTOLA. |
 | extraDeploy | list | `[]` | Extra objects to deploy (value evaluated as a template) |
 | fullnameOverride | string | `""` | fullname to use |
 | gemeente.code | string | `""` |  |

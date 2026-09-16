@@ -51,6 +51,13 @@ data:
   DB_HOST: {{ required "Valid .Values.db.host entry required!" .Values.db.host }}
   DB_NAME: {{ required "Valid .Values.db.name entry required!" .Values.db.name }}
   DB_USER: {{ required "Valid .Values.db.user entry required!" .Values.db.user }}
+  {{- if .Values.documentCreationProvider }}
+  DOCUMENT_CREATION_PROVIDER: {{ .Values.documentCreationProvider | quote }}
+  {{- end }}
+  {{- if eq (upper (.Values.documentCreationProvider | default "")) "EPISTOLA" }}
+  EPISTOLA_CLIENT_MP_REST_URL: {{ required "Valid .Values.epistola.url entry required!" .Values.epistola.url }}
+  EPISTOLA_TENANT_ID: {{ required "Valid .Values.epistola.tenantId entry required!" .Values.epistola.tenantId | quote }}
+  {{- end }}
   GEMEENTE_CODE: {{ required "Valid .Values.gemeente.code entry required!" .Values.gemeente.code  | quote }}
   GEMEENTE_NAAM: {{ required "Valid .Values.gemeente.naam entry required!" .Values.gemeente.naam }}
   GEMEENTE_MAIL: {{ required "Valid .Values.gemeente.mail entry required!" .Values.gemeente.mail }}
